@@ -1,32 +1,37 @@
-from selenium import webdriver
+from utils.browser_setup import create_browser
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 import time
+import os
+from dotenv import load_dotenv
 
-# Chrome setup with headless mode
-options = Options()
-options.add_argument("--headless")  # Run without a UI
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
+def main():
+    driver = create_browser()
 
-# Path to ChromeDriver
-service = Service("/usr/local/bin/chromedriver")  # Update path if needed
+    # Access secrets from .env (local) or GitHub Secrets (production)
+    if not os.getenv("GITHUB_ACTIONS"):
+        load_dotenv()
 
-driver = webdriver.Chrome(service=service, options=options)
+    username = os.getenv("SPÅT_USERNAME")
+    password = os.getenv("SPÅT_PASSWORD")
+    url = os.getenv("SPÅT_URL")
 
-try:
-    # Open a website
-    driver.get("https://example.com/login")
+    try:
+        # Open a website
+        driver.get(url)
+        print("Website title: ", driver.title)
 
-    # Interact with the page
-    driver.find_element(By.ID, "username").send_keys("your_username")
-    driver.find_element(By.ID, "password").send_keys("your_password")
-    driver.find_element(By.ID, "loginButton").click()
+        # Interact with the page
+        driver.find_element(By.NAME, "email").send_keys(username)
+        driver.find_element(By.NAME, "password").send_keys(password)
+        driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+        print("Login button clicked!")
 
-    # Wait for some time to ensure actions complete
-    time.sleep(5)
+        # Wait for some time to ensure actions complete
+        time.sleep(5)
 
-    print("Login Successful!")
-finally:
-    driver.quit()
+        print("Login Successful!")
+    finally:
+        driver.quit()
+
+if __name__ == "__main__":
+    main()

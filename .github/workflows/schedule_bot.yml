@@ -20,4 +20,5 @@
 #           env:
 #             USERNAME: ${{ secrets.USERNAME }}
 #             PASSWORD: ${{ secrets.PASSWORD }}
-#         run: docker run selenium-bot
+#           run: docker run -e USERNAME=$USERNAME -e PASSWORD=$PASSWORD selenium-bot
+

@@ -1,5 +1,4 @@
 from utils.browser_setup import create_browser
-from utils.iterate_sessions import iterate_sessions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -59,13 +58,6 @@ def main():
         )
         sessions_button.click()
         print("Sessions button clicked!")
-
-        # Iterate over sessions
-        sessions = iterate_sessions(driver)
-        print("Sessions with 'Lähitapiola Raisio': ", sessions)
-
-
-
 
     except Exception as e:
         print("An error occurred: ", e)

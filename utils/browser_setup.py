@@ -4,9 +4,16 @@ from selenium.webdriver.chrome.options import Options
 import os
 
 def create_browser():
-    """Create and return a browser instance."""
+    """Create and return a browser instance with specified download settings."""
 
     driver_path = os.path.join("drivers", "chromedriver.exe")
+
+
+    download_folder = os.path.join(os.getcwd(), "temp")
+
+    if not os.path.exists(download_folder):
+        print("Creating download folder:", download_folder)
+        os.makedirs(download_folder)
 
     options = Options()
     options.add_argument("--headless")  # Headless mode (no UI)
@@ -14,7 +21,20 @@ def create_browser():
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
 
-    # Initialize the browser
+    # options.add_argument("--enable-logging")
+    # options.add_argument("--v=1")
+
+    # Set download preferences
+    prefs = {
+        "download.default_directory": download_folder,
+        "download.prompt_for_download": False,
+        "download.directory_upgrade": True,
+        "safebrowsing.enabled": True
+    }
+    options.add_experimental_option("prefs", prefs)
+
+    print("Browser options set for download directory:", prefs["download.default_directory"])
+
     service = Service(driver_path)
     driver = webdriver.Chrome(service=service, options=options)
 

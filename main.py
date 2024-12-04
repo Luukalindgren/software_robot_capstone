@@ -7,9 +7,10 @@ from selenium.webdriver.common.by import By
 
 
 def main():
-    driver = create_browser()
-
     arena = "Lähitapiola Raisio"
+    download_folder = "temp"
+
+    driver = create_browser()
 
     load_environment_variables()
 
@@ -19,7 +20,7 @@ def main():
 
     session_ids = get_session_ids(driver)
 
-    loop_through_sessions(driver, arena, session_ids)
+    loop_through_sessions(driver, arena, session_ids, download_folder)
 
     print("Current url: ", driver.current_url)
 

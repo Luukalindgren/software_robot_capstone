@@ -4,10 +4,10 @@ from selenium.webdriver.chrome.options import Options
 import os
 
 def create_browser():
-    # Path to ChromeDriver
+    """Create and return a browser instance."""
+
     driver_path = os.path.join("drivers", "chromedriver.exe")
 
-    # Chrome options
     options = Options()
     options.add_argument("--headless")  # Headless mode (no UI)
     options.add_argument("--disable-gpu")  # For better performance

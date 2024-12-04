@@ -1,32 +1,30 @@
-from selenium import webdriver
+from utils.browser_setup import create_browser
+from utils.login_actions import login_to_spåt
+from utils.spåt_actions import apply_arena_filter, loop_through_sessions, get_session_ids
+from utils.config import load_environment_variables
+
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-import time
 
-# Chrome setup with headless mode
-options = Options()
-options.add_argument("--headless")  # Run without a UI
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
 
-# Path to ChromeDriver
-service = Service("/usr/local/bin/chromedriver")  # Update path if needed
+def main():
+    arena = "Lähitapiola Raisio"
+    download_folder = "temp"
 
-driver = webdriver.Chrome(service=service, options=options)
+    driver = create_browser()
 
-try:
-    # Open a website
-    driver.get("https://example.com/login")
+    load_environment_variables()
 
-    # Interact with the page
-    driver.find_element(By.ID, "username").send_keys("your_username")
-    driver.find_element(By.ID, "password").send_keys("your_password")
-    driver.find_element(By.ID, "loginButton").click()
+    login_to_spåt(driver)
 
-    # Wait for some time to ensure actions complete
-    time.sleep(5)
+    apply_arena_filter(driver, arena)
 
-    print("Login Successful!")
-finally:
+    session_ids = get_session_ids(driver)
+
+    loop_through_sessions(driver, arena, session_ids, download_folder)
+
+    print("Current url: ", driver.current_url)
+
     driver.quit()
+
+if __name__ == "__main__":
+    main()

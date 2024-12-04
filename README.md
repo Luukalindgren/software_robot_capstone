@@ -1,0 +1,18 @@
+# Selenium Automation Project
+
+## TODO: WRITE INSTRUCTIONS ON HOW TO TAKE INTO USE LOCALLY
+
+## Project Structure
+
+```plaintext
+selenium_project/
+│
+├── venv/                  # Virtual environment
+├── drivers/               # Browser drivers (e.g., chromedriver.exe)
+├── tests/                 # Test cases for automation scripts
+├── utils/                 # Utility functions (e.g., logging, helper methods)
+├── requirements.txt       # Python dependencies
+├── main.py                # Main script for the automation
+├── README.md              # Project description
+├── .gitignore             # Git ignore file
+├── .env                   # Environmental secrets

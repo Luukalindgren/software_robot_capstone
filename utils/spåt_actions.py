@@ -1,6 +1,8 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import time
+import os
 
 # Define locators as constants
 TABLE_LOCATOR = "[data-testid='virtuoso-item-list']"
@@ -10,6 +12,11 @@ ARENA_INPUT_LOCATOR_TEMPLATE = "li[data-value='{}']"
 FILTER_BUTTON_LOCATOR = "button.css-3ihcqq"
 BACKDROP_LOCATOR = "MuiBackdrop-root"
 APPLY_BUTTON_LOCATOR_XPATH = "/html/body/div/div/div[1]/main/div[2]/div[2]/div/div[4]/div/button[2]"
+
+def get_table_rows(driver):
+    """Helper function to get all rows from the session table."""
+    table = driver.find_element(By.CSS_SELECTOR, TABLE_LOCATOR)
+    return table.find_elements(By.CSS_SELECTOR, ROW_LOCATOR)
 
 def get_session_ids(driver):
     """Extract session IDs from the current page."""
@@ -49,7 +56,7 @@ def apply_arena_filter(driver, arena):
     except Exception as e:
         print("An error occurred applying the filter: ", e)
 
-def loop_through_sessions(driver, arena, session_ids):
+def loop_through_sessions(driver, arena, session_ids, download_folder):
     """Loop through sessions and process each"""
     try:
         for session_name in session_ids:
@@ -62,6 +69,9 @@ def loop_through_sessions(driver, arena, session_ids):
             print(f"Session {session_name} opened!")
 
             print("Current URL: ", driver.current_url)
+
+            download_session_data(driver, download_folder)
+
             driver.back()
 
             WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, ROW_LOCATOR)))
@@ -72,7 +82,56 @@ def loop_through_sessions(driver, arena, session_ids):
     except Exception as e:
         print("An error occurred during looping: ", e)
 
-def get_table_rows(driver):
-    """Helper function to get all rows from the session table."""
-    table = driver.find_element(By.CSS_SELECTOR, TABLE_LOCATOR)
-    return table.find_elements(By.CSS_SELECTOR, ROW_LOCATOR)
+def download_session_data(driver, download_folder):
+    """Click the 'Export to Excel' button and download the file."""
+    try:
+        # Find and wait both 'Export' and 'Delete' buttons
+        buttons = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "css-1xoy143")))
+        
+        # Filter to find the Export to Excel button by its visible text
+        export_button = None
+        for button in buttons:
+            if "Export to Excel" in button.text:
+                export_button = button
+                break
+
+        # If Export to Excel button is found, click it
+        if export_button:
+            print("Found 'Export to Excel' button, attempting to click it.")
+            WebDriverWait(driver, 10).until(EC.element_to_be_clickable(export_button)).click()
+            print("Export to Excel button clicked!")
+        else:
+            print("Error: Export to Excel button not found!")
+            return
+
+        downloaded_file = wait_for_download(download_folder)
+        if downloaded_file:
+            print("Downloaded file: ", downloaded_file)
+        else:
+            print("Download failed!")
+                
+    except Exception as e:
+        print("Error downloading session data: ", e)
+
+def wait_for_download(download_folder, timeout=60):
+    """Wait for the download to finish by checking the download folder."""
+    print("Waiting for download to complete...")
+    start_time = time.time()
+
+    # Record the initial files in the download folder
+    existing_files = set(os.listdir(download_folder))
+    
+    while time.time() - start_time < timeout:
+        # Check for new files in the folder
+        files_in_directory = set(os.listdir(download_folder))
+        
+        # Check if any new files are added to the folder
+        new_files = files_in_directory - existing_files
+        if new_files:
+            print(f"New files detected: {new_files}")
+            return new_files  # Return the new files (i.e., the downloaded files)
+
+        time.sleep(1)
+
+    print("Download timed out!")
+    return None

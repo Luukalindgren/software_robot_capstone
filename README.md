@@ -2,6 +2,13 @@
 
 ## TODO: WRITE INSTRUCTIONS ON HOW TO TAKE INTO USE LOCALLY
 
+1. Clone the repository
+2. Create a virtual environment
+3. Install dependencies
+4. Download the ChromeDriver to the drivers/ directory
+5. Create a `.env` file to root directory
+6. Run the main.py script
+
 ## Project Structure
 
 ```plaintext
@@ -16,3 +23,4 @@ selenium_project/
 ├── README.md              # Project description
 ├── .gitignore             # Git ignore file
 ├── .env                   # Environmental secrets
+```

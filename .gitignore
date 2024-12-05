@@ -30,3 +30,6 @@ debug.log
 
 # Downloads
 temp/*
+
+# ChromeDriver
+drivers/*

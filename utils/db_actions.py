@@ -1,6 +1,6 @@
 from pymongo import MongoClient
-from config import load_environment_variables
-from data_from_excel import get_user_data
+from utils.config import load_environment_variables
+from utils.data_from_excel import get_user_data
 import os
 
 def connect_to_db():

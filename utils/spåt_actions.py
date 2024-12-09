@@ -13,16 +13,22 @@ FILTER_BUTTON_LOCATOR = "button.css-3ihcqq"
 BACKDROP_LOCATOR = "MuiBackdrop-root"
 APPLY_BUTTON_LOCATOR_XPATH = "/html/body/div/div/div[1]/main/div[2]/div[2]/div/div[4]/div/button[2]"
 
+# TODO:
+# - Function that uploads the downloaded data to the MongoDB
+
+
+
 def get_table_rows(driver):
     """Helper function to get all rows from the session table."""
     table = driver.find_element(By.CSS_SELECTOR, TABLE_LOCATOR)
+
     return table.find_elements(By.CSS_SELECTOR, ROW_LOCATOR)
 
 def get_session_ids(driver):
-    """Extract session IDs from the current page."""
+    """Extract latest three session IDs from the current page."""
     session_ids = []
 
-    rows = get_table_rows(driver)
+    rows = get_table_rows(driver)[:3]
 
     for row in rows:
         session_id = row.text
@@ -58,6 +64,7 @@ def apply_arena_filter(driver, arena):
 
 def loop_through_sessions(driver, arena, session_ids, download_folder):
     """Loop through sessions and process each"""
+
     try:
         for session_name in session_ids:
             print(f"Processing session: {session_name}")
@@ -84,6 +91,11 @@ def loop_through_sessions(driver, arena, session_ids, download_folder):
 
 def download_session_data(driver, download_folder):
     """Click the 'Export to Excel' button and download the file."""
+    
+    if check_if_already_downloaded(driver, download_folder):
+        print("Session data already downloaded, skipping...")
+        return
+
     try:
         # Find and wait both 'Export' and 'Delete' buttons
         buttons = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "css-1xoy143")))
@@ -95,7 +107,6 @@ def download_session_data(driver, download_folder):
                 export_button = button
                 break
 
-        # If Export to Excel button is found, click it
         if export_button:
             print("Found 'Export to Excel' button, attempting to click it.")
             WebDriverWait(driver, 10).until(EC.element_to_be_clickable(export_button)).click()
@@ -113,25 +124,30 @@ def download_session_data(driver, download_folder):
     except Exception as e:
         print("Error downloading session data: ", e)
 
-def wait_for_download(download_folder, timeout=60):
+def wait_for_download(download_folder, timeout=30):
     """Wait for the download to finish by checking the download folder."""
     print("Waiting for download to complete...")
     start_time = time.time()
 
-    # Record the initial files in the download folder
     existing_files = set(os.listdir(download_folder))
     
     while time.time() - start_time < timeout:
-        # Check for new files in the folder
         files_in_directory = set(os.listdir(download_folder))
         
-        # Check if any new files are added to the folder
         new_files = files_in_directory - existing_files
         if new_files:
             print(f"New files detected: {new_files}")
-            return new_files  # Return the new files (i.e., the downloaded files)
-
+            return new_files
+        
         time.sleep(1)
 
     print("Download timed out!")
     return None
+
+def check_if_already_downloaded(driver, download_folder):
+    """Check if the session data has already been downloaded"""
+
+    session_id = driver.current_url.split("/")[-1]
+    print("Checking if session data already downloaded for session ID:", session_id)
+
+    return f"session_{session_id}_statistics.xlsx" in os.listdir(download_folder)

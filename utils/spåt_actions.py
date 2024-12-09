@@ -84,6 +84,11 @@ def loop_through_sessions(driver, arena, session_ids, download_folder):
 
 def download_session_data(driver, download_folder):
     """Click the 'Export to Excel' button and download the file."""
+    
+    if check_if_already_downloaded(driver, download_folder):
+        print("Session data already downloaded, skipping...")
+        return
+
     try:
         # Find and wait both 'Export' and 'Delete' buttons
         buttons = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "css-1xoy143")))
@@ -113,7 +118,7 @@ def download_session_data(driver, download_folder):
     except Exception as e:
         print("Error downloading session data: ", e)
 
-def wait_for_download(download_folder, timeout=60):
+def wait_for_download(download_folder, timeout=30):
     """Wait for the download to finish by checking the download folder."""
     print("Waiting for download to complete...")
     start_time = time.time()
@@ -135,3 +140,11 @@ def wait_for_download(download_folder, timeout=60):
 
     print("Download timed out!")
     return None
+
+def check_if_already_downloaded(driver, download_folder):
+    """Check if the session data has already been downloaded"""
+
+    session_id = driver.current_url.split("/")[-1]
+    print("Checking if session data already downloaded for session ID:", session_id)
+
+    return f"session_{session_id}_statistics.xlsx" in os.listdir(download_folder)

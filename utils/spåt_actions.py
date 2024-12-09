@@ -16,6 +16,12 @@ APPLY_BUTTON_LOCATOR_XPATH = "/html/body/div/div/div[1]/main/div[2]/div[2]/div/d
 def get_table_rows(driver):
     """Helper function to get all rows from the session table."""
     table = driver.find_element(By.CSS_SELECTOR, TABLE_LOCATOR)
+
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    time.sleep(1)
+    driver.execute_script("window.scrollTo(0, document.body.scrollTop);")
+    time.sleep(1)
+
     return table.find_elements(By.CSS_SELECTOR, ROW_LOCATOR)
 
 def get_session_ids(driver):
@@ -100,7 +106,6 @@ def download_session_data(driver, download_folder):
                 export_button = button
                 break
 
-        # If Export to Excel button is found, click it
         if export_button:
             print("Found 'Export to Excel' button, attempting to click it.")
             WebDriverWait(driver, 10).until(EC.element_to_be_clickable(export_button)).click()
@@ -123,19 +128,16 @@ def wait_for_download(download_folder, timeout=30):
     print("Waiting for download to complete...")
     start_time = time.time()
 
-    # Record the initial files in the download folder
     existing_files = set(os.listdir(download_folder))
     
     while time.time() - start_time < timeout:
-        # Check for new files in the folder
         files_in_directory = set(os.listdir(download_folder))
         
-        # Check if any new files are added to the folder
         new_files = files_in_directory - existing_files
         if new_files:
             print(f"New files detected: {new_files}")
-            return new_files  # Return the new files (i.e., the downloaded files)
-
+            return new_files
+        
         time.sleep(1)
 
     print("Download timed out!")

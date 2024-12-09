@@ -5,6 +5,10 @@ from utils.config import load_environment_variables
 
 from selenium.webdriver.common.by import By
 
+# TODO:
+# - Containerize with Docker
+# - Test the GitHub Actions, daily schedule
+
 
 def main():
     arena = "Lähitapiola Raisio"

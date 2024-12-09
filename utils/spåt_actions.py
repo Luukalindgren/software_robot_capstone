@@ -13,25 +13,22 @@ FILTER_BUTTON_LOCATOR = "button.css-3ihcqq"
 BACKDROP_LOCATOR = "MuiBackdrop-root"
 APPLY_BUTTON_LOCATOR_XPATH = "/html/body/div/div/div[1]/main/div[2]/div[2]/div/div[4]/div/button[2]"
 
-# ADD/MODIFY CODE TO FETCH ONLY THE LATEST ONE/FEW SESSIONS
-# SO THAT THIS CAN BE AUTOMATED TO RUN DAILY VIA GITHUB ACTIONS
+# TODO:
+# - Function that uploads the downloaded data to the MongoDB
+
+
 
 def get_table_rows(driver):
     """Helper function to get all rows from the session table."""
     table = driver.find_element(By.CSS_SELECTOR, TABLE_LOCATOR)
 
-    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    time.sleep(1)
-    driver.execute_script("window.scrollTo(0, document.body.scrollTop);")
-    time.sleep(1)
-
     return table.find_elements(By.CSS_SELECTOR, ROW_LOCATOR)
 
 def get_session_ids(driver):
-    """Extract session IDs from the current page."""
+    """Extract latest three session IDs from the current page."""
     session_ids = []
 
-    rows = get_table_rows(driver)
+    rows = get_table_rows(driver)[:3]
 
     for row in rows:
         session_id = row.text
@@ -42,9 +39,6 @@ def get_session_ids(driver):
 
 def apply_arena_filter(driver, arena):
     """Apply the arena filter to the sessions page"""
-
-    # Need to add scroll-to-top to ensure that the filter button is clickable
-
     try:
         filter_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, FILTER_BUTTON_LOCATOR)))
         filter_button.click()
@@ -70,9 +64,6 @@ def apply_arena_filter(driver, arena):
 
 def loop_through_sessions(driver, arena, session_ids, download_folder):
     """Loop through sessions and process each"""
-
-    # Need to add some scrolling to ensure that the row is clickable 
-    # Without scrolling bot can access only the first 9 sessions/rows
 
     try:
         for session_name in session_ids:

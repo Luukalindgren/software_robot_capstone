@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-docker-bot:
+  run-selenium-bot:
     runs-on: ubuntu-latest
 
     steps:

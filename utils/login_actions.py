@@ -6,9 +6,9 @@ import os
 def login_to_spåt(driver):
     """Login to Spåt with credentials from environment variables"""
     
-    username = os.getenv("SPÅT_USERNAME")
-    password = os.getenv("SPÅT_PASSWORD")
-    url = os.getenv("SPÅT_URL")
+    username = os.getenv("SPAT_USERNAME")
+    password = os.getenv("SPAT_PASSWORD")
+    url = os.getenv("SPAT_URL")
 
     try:
         driver.get(url)

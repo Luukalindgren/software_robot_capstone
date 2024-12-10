@@ -18,15 +18,31 @@ def main():
 
     driver = create_browser()
 
+    # Debugging
+    driver.save_screenshot("screenshot1.png")
+    print("Browser created!", driver.page_source)
+
     load_environment_variables()
 
     login_to_spåt(driver)
 
+    # Debugging
+    driver.save_screenshot("screenshot2.png")
+    print("Logged in!", driver.page_source)
+
     apply_arena_filter(driver, arena)
+
+    # Debugging
+    driver.save_screenshot("screenshot3.png")
+    print("Arena filter applied!", driver.page_source)
 
     session_ids = get_session_ids(driver)
 
     loop_through_sessions(driver, arena, session_ids, download_folder)
+
+    # Debugging
+    driver.save_screenshot("screenshot4.png")
+    print("Sessions processed!", driver.page_source)
 
     # Database actions
     client = connect_to_db()

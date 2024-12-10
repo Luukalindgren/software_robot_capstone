@@ -32,10 +32,10 @@ jobs:
         run: python main.py
 
       - name: Upload Screenshots
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: screenshots
-          path: '*.png'
-          
+          path: "*.png"
+
       - name: Echo Bot Finished
         run: echo "Bot finished running"

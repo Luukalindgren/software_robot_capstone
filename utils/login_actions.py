@@ -25,13 +25,17 @@ def login_to_spåt(driver):
         password_input.clear()
         password_input.send_keys(password)
 
+        print("Credentials entered")
+
         login_button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']")))
         login_button.click()
+        print("Login button clicked")
 
         WebDriverWait(driver, 20).until(EC.url_changes(url))
 
         sessions_button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CLASS_NAME, "button-sessions")))
         sessions_button.click()
+        print("Sessions button clicked")
 
     except Exception as e:
         print("An error occurred during login: ", e)

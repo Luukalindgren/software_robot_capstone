@@ -20,6 +20,7 @@ APPLY_BUTTON_LOCATOR_XPATH = "/html/body/div/div/div[1]/main/div[2]/div[2]/div/d
 
 def get_table_rows(driver):
     """Helper function to get all rows from the session table."""
+    print("Getting table rows...")
     table = driver.find_element(By.CSS_SELECTOR, TABLE_LOCATOR)
 
     return table.find_elements(By.CSS_SELECTOR, ROW_LOCATOR)
@@ -40,6 +41,7 @@ def get_session_ids(driver):
 def apply_arena_filter(driver, arena):
     """Apply the arena filter to the sessions page"""
     try:
+        print("Applying arena filter...")
         filter_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, FILTER_BUTTON_LOCATOR)))
         filter_button.click()
 
@@ -66,6 +68,7 @@ def loop_through_sessions(driver, arena, session_ids, download_folder):
     """Loop through sessions and process each"""
 
     try:
+        print("Looping through sessions...")
         for session_name in session_ids:
             print(f"Processing session: {session_name}")
 

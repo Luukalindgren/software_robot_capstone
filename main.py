@@ -20,7 +20,7 @@ def main():
 
     # Debugging
     driver.save_screenshot("/home/runner/work/my_project/my_project/screenshot1.png")
-    print("Browser created!", driver.page_source)
+    print("Browser created!", driver.current_url)
 
     load_environment_variables()
 
@@ -28,13 +28,13 @@ def main():
 
     # Debugging
     driver.save_screenshot("/home/runner/work/my_project/my_project/screenshot2.png")
-    print("Logged in!", driver.page_source)
+    print("Logged in!", driver.current_url)
 
     apply_arena_filter(driver, arena)
 
     # Debugging
     driver.save_screenshot("/home/runner/work/my_project/my_project/screenshot3.png")
-    print("Arena filter applied!", driver.page_source)
+    print("Arena filter applied!", driver.current_url)
 
     session_ids = get_session_ids(driver)
 
@@ -42,7 +42,7 @@ def main():
 
     # Debugging
     driver.save_screenshot("/home/runner/work/my_project/my_project/screenshot4.png")
-    print("Sessions processed!", driver.page_source)
+    print("Sessions processed!", driver.current_url)
 
     # Database actions
     client = connect_to_db()

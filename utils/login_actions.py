@@ -15,6 +15,7 @@ def login_to_spåt(driver):
     try:
         driver.get(url)
         print("Website title: ", driver.title)
+        print("Current URL: ", driver.current_url)
 
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "root")))
         email_input = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "email")))
@@ -35,6 +36,8 @@ def login_to_spåt(driver):
 
         sessions_button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CLASS_NAME, "button-sessions")))
         sessions_button.click()
+        
+        WebDriverWait(driver, 20).until(EC.url_to_be(url + "/sessions"))
         print("Sessions button clicked")
 
     except Exception as e:

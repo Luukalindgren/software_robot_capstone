@@ -4,10 +4,9 @@
 
 1. Clone the repository
 2. Create a virtual environment
-3. Install dependencies
-4. Download the ChromeDriver to the drivers/ directory
-5. Create a `.env` file to root directory
-6. Run the main.py script
+3. Install dependencies 
+4. Create a `.env` file to root directory
+5. Run the main.py script
 
 ## Project Structure
 

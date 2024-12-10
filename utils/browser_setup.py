@@ -1,13 +1,11 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 import os
 
 def create_browser():
     """Create and return a browser instance with specified download settings."""
-
-    driver_path = os.path.join("drivers", "chromedriver.exe")
-
 
     download_folder = os.path.join(os.getcwd(), "temp")
 
@@ -35,7 +33,7 @@ def create_browser():
 
     print("Browser options set for download directory:", prefs["download.default_directory"])
 
-    service = Service(driver_path)
+    service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
 
     return driver

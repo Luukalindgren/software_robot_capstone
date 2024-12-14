@@ -35,7 +35,9 @@ def login_to_spåt(driver):
         WebDriverWait(driver, 20).until(EC.url_changes(url))
 
         sessions_button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CLASS_NAME, "button-sessions")))
-        sessions_button.click()
+        #sessions_button.click()
+
+        driver.get('https://spat.interjektio.dev/sessions')
         
         WebDriverWait(driver, 20).until(EC.url_to_be(url + "/sessions"))
         print("Sessions button clicked")

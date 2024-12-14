@@ -2,13 +2,13 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.os_manager import ChromeType
 import os
-import chromedriver_autoinstaller
 
 def create_browser():
     """Create and return a browser instance with specified download settings."""
-
-    chromedriver_autoinstaller.install()
+    
+    chrome_service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
 
     download_folder = os.path.join(os.getcwd(), "temp")
 
@@ -21,6 +21,7 @@ def create_browser():
     options.add_argument("--window-size=1920x1080")
     options.add_argument("--disable-gpu")  # For better performance
     options.add_argument("--no-sandbox")
+    options.add_argument("--ignore-certifiate-errors")
     options.add_argument("--disable-dev-shm-usage")
 
     # options.add_argument("--enable-logging")
@@ -37,7 +38,6 @@ def create_browser():
 
     print("Browser options set for download directory:", prefs["download.default_directory"])
 
-    #service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(service=chrome_service, options=options)
 
     return driver

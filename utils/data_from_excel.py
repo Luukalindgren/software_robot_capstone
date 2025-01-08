@@ -57,6 +57,8 @@ def get_user_data(full_path):
                     "time_percentage": 0.0,
                     "total_distance": 0.0,
                     "distance_percentage": 0.0,
+                    "acceleration": 0,
+                    "decelaration": 0
                 }
                 # Append the dictionary to the list
                 user_data[worksheet_count]["speed_data"].append(speed_data_entry)
@@ -74,19 +76,31 @@ def get_user_data(full_path):
         iteration = 0
         for row_cells in active_sheet.iter_rows(min_row=2, max_row=5):
             if(row_cells[col_names['Percentage (%)']].value != None):
-                user_data[worksheet_count]["speed_data"][iteration]["time_percentage"] = row_cells[col_names['Percentage (%)']].value
+                user_data[worksheet_count]["speed_data"][iteration]["time_percentage"] = float(row_cells[col_names['Percentage (%)']].value)
                 iteration += 1
         #total_distance
         iteration = 0
         for row_cells in active_sheet.iter_rows(min_row=2, max_row=5):
             if(row_cells[col_names['Total Distance (m)']].value != None):
-                user_data[worksheet_count]["speed_data"][iteration]["total_distance"] = row_cells[col_names['Total Distance (m)']].value
+                user_data[worksheet_count]["speed_data"][iteration]["total_distance"] = float(row_cells[col_names['Total Distance (m)']].value)
                 iteration += 1
         #distance_percentage
         iteration = 0
         for row_cells in active_sheet.iter_rows(min_row=2, max_row=5):
             if(row_cells[col_names['Percentage (%)']].value != None):
-                user_data[worksheet_count]["speed_data"][iteration]["distance_percentage"] = row_cells[col_names['Percentage (%)']].value
+                user_data[worksheet_count]["speed_data"][iteration]["distance_percentage"] = float(row_cells[col_names['Percentage (%)']].value)
+                iteration += 1
+        #acceleration
+        iteration = 0
+        for row_cells in active_sheet.iter_rows(min_row=12, max_row=13):
+            if(row_cells[col_names['Total Time']].value != None):
+                user_data[worksheet_count]["speed_data"][iteration]["acceleration"] = int(row_cells[col_names['Total Time']].value)
+                iteration += 1
+        #deceleration
+        iteration = 0
+        for row_cells in active_sheet.iter_rows(min_row=12, max_row=13):
+            if(row_cells[col_names['Percentage (%)']].value != None):
+                user_data[worksheet_count]["speed_data"][iteration]["deceleration"] = int(row_cells[col_names['Percentage (%)']].value)
                 iteration += 1
         worksheet_count += 1
     return(user_data)

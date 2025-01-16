@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
+        with:
+          ref: firefox-version
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -30,12 +32,6 @@ jobs:
           SPAT_PASSWORD: ${{ secrets.SPAT_PASSWORD }}
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
         run: python main.py
-
-      - name: Upload Screenshots
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshots
-          path: "*.png"
 
       - name: Echo Bot Finished
         run: echo "Bot finished running"

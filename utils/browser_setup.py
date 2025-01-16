@@ -15,7 +15,7 @@ def create_browser():
         os.makedirs(download_folder)
 
     options = Options()
-    #options.add_argument("--headless")  # Headless mode (no UI)
+    options.add_argument("--headless")  # Headless mode (no UI)
     options.add_argument("--window-size=1920x1080")
     options.add_argument("--disable-gpu")  # For better performance
     options.add_argument("--no-sandbox")

@@ -69,6 +69,8 @@ def get_user_data(full_path):
                     "time_percentage": 0.0,
                     "total_distance": 0.0,
                     "distance_percentage": 0.0,
+                    "acceleration": 0,
+                    "decelaration": 0
                 }
                 # Append the dictionary to the list
                 user_data[worksheet_count]["speed_data"].append(speed_data_entry)

@@ -10,7 +10,7 @@ ROW_LOCATOR = "tr.MuiTableRow-root"
 ARENA_SELECTOR_LOCATOR = "div.MuiSelect-multiple"
 ARENA_INPUT_LOCATOR_TEMPLATE = "li[data-value='{}']"
 FILTER_BUTTON_LOCATOR = "button.css-3ihcqq"
-BACKDROP_LOCATOR = "MuiBackdrop-root"
+BACKDROP_LOCATOR = "div.css-esi9ax"
 APPLY_BUTTON_LOCATOR_XPATH = "/html/body/div/div/div[1]/main/div[2]/div[2]/div/div[4]/div/button[2]"
 
 # TODO:
@@ -20,23 +20,29 @@ APPLY_BUTTON_LOCATOR_XPATH = "/html/body/div/div/div[1]/main/div[2]/div[2]/div/d
 
 def get_table_rows(driver):
     """Helper function to get all rows from the session table."""
-    print("Getting table rows...")
-    table = driver.find_element(By.CSS_SELECTOR, TABLE_LOCATOR)
+    try:
+        print("Getting table rows...")
+        table = driver.find_element(By.CSS_SELECTOR, TABLE_LOCATOR)
+        return table.find_elements(By.CSS_SELECTOR, ROW_LOCATOR)
+    except Exception as e:
+        print("An error occurred getting table rows: ", e)
 
-    return table.find_elements(By.CSS_SELECTOR, ROW_LOCATOR)
 
 def get_session_ids(driver):
     """Extract latest three session IDs from the current page."""
-    session_ids = []
+    try:
+        session_ids = []
 
-    rows = get_table_rows(driver)[:3]
+        rows = get_table_rows(driver)[:3]
 
-    for row in rows:
-        session_id = row.text
-        session_ids.append(session_id)
-        print(f"Session ID: {session_id}")
-    
-    return session_ids
+        for row in rows:
+            session_id = row.text
+            session_ids.append(session_id)
+            print(f"Session ID: {session_id}")
+        
+        return session_ids
+    except Exception as e:
+        print("An error occurred getting session IDs: ", e)
 
 def apply_arena_filter(driver, arena):
     """Apply the arena filter to the sessions page"""
@@ -52,8 +58,10 @@ def apply_arena_filter(driver, arena):
         arena_input = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, arena_input_locator)))
         arena_input.click()
 
-        backdrop = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, BACKDROP_LOCATOR)))
+        backdrop = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, BACKDROP_LOCATOR)))
         backdrop.click()
+        print("Backdrop clicked!")
+        time.sleep(1)
 
         apply_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, APPLY_BUTTON_LOCATOR_XPATH)))
         apply_button.click()
@@ -72,10 +80,10 @@ def loop_through_sessions(driver, arena, session_ids, download_folder):
         for session_name in session_ids:
             print(f"Processing session: {session_name}")
 
-            rows = get_table_rows(driver)
+            rows = get_table_rows(driver)[:3]
             session_row = next(row for row in rows if session_name in row.text)
 
-            session_row.click()
+            driver.execute_script("arguments[0].click();", session_row)
             print(f"Session {session_name} opened!")
 
             print("Current URL: ", driver.current_url)

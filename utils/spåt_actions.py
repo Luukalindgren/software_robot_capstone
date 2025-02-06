@@ -1,6 +1,8 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import requests
+import json
 import time
 import os
 
@@ -33,7 +35,7 @@ def get_session_ids(driver):
     try:
         session_ids = []
 
-        rows = get_table_rows(driver)[:3]
+        rows = get_table_rows(driver)[:8]
 
         for row in rows:
             session_id = row.text
@@ -80,13 +82,15 @@ def loop_through_sessions(driver, arena, session_ids, download_folder):
         for session_name in session_ids:
             print(f"Processing session: {session_name}")
 
-            rows = get_table_rows(driver)[:3]
+            rows = get_table_rows(driver)[:8]
             session_row = next(row for row in rows if session_name in row.text)
 
             driver.execute_script("arguments[0].click();", session_row)
             print(f"Session {session_name} opened!")
 
             print("Current URL: ", driver.current_url)
+
+            get_team_id(driver)
 
             download_session_data(driver, download_folder)
 
@@ -162,3 +166,58 @@ def check_if_already_downloaded(driver, download_folder):
     print("Checking if session data already downloaded for session ID:", session_id)
 
     return f"session_{session_id}_statistics.xlsx" in os.listdir(download_folder)
+
+def get_team_id(driver):
+    """
+    Fetches authorization token and uses it to do GraphQL query to
+    get the team_id of the players in the session.
+    With this GraphQL we could also extract all the same data that
+    the downloaded excel files contain... Not implemented.
+    """
+
+    graphql_url = "https://spat.interjektio.dev/v1/graphql"
+    session_id = driver.current_url.split("/")[-1]
+    auth_token = driver.get_cookie("Authorization")
+
+    payload = {
+        "operationName": "GetSessionPlayerData",
+        "variables": {
+            "session_id": session_id
+        },
+        "query": (
+                "query GetSessionPlayerData($session_id: Int) {\n"
+                "  tag(\n"
+                "    where: {tag_assignments: {session_id: {_eq: $session_id}}}\n"
+                "    order_by: {tag_id: asc}\n"
+                "  ) {\n"
+                "    tag_assignments(where: {session_id: {_eq: $session_id}}) {\n"
+                "      player {\n"
+                "        id\n"
+                "        name\n"
+                "        team_id\n"
+                "        __typename\n"
+                "      }\n"
+                "    }\n"
+                "  }\n"
+                "}\n"
+            )
+        }
+
+    headers = {
+        "Authorization": "Bearer Zm9vOmJhcg==",
+        "Content-Type": "application/json",
+        "Referer": driver.current_url
+    }
+
+    cookies = {
+        "Authorization": auth_token['value']
+    }
+
+    response = requests.post(graphql_url, json=payload, headers=headers, cookies=cookies)
+
+    if response.ok:
+        data = response.json()
+        team_id = data['data']['tag'][0]['tag_assignments'][0]['player']['team_id']
+        print("Team_id: ", team_id)
+    else:
+        print("Request failed: ", response.status_code, response.text)

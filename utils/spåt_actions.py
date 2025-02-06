@@ -106,6 +106,8 @@ def loop_through_sessions(driver, arena, session_ids, download_folder):
 
 def download_session_data(driver, download_folder):
     """Click the 'Export to Excel' button and download the file."""
+
+    # NEEDS TO RENAME THE DOWNLOADED FILE TO INCLUDE THE TEAM ID
     
     if check_if_already_downloaded(driver, download_folder):
         print("Session data already downloaded, skipping...")

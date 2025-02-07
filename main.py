@@ -1,6 +1,6 @@
 from utils.browser_setup import create_browser
-from utils.login_actions import login_to_spåt
-from utils.spåt_actions import apply_arena_filter, loop_through_sessions, get_session_ids
+from utils.login_actions import login_to_spat
+from utils.spat_actions import apply_arena_filter, loop_through_sessions, get_session_ids
 from utils.config import load_environment_variables
 from utils.db_actions import connect_to_db, upload_sessions_to_db
 
@@ -24,7 +24,7 @@ def main():
 
     load_environment_variables()
 
-    login_to_spåt(driver)
+    login_to_spat(driver)
 
     # Debugging
     driver.save_screenshot("/home/runner/work/my_project/my_project/screenshot2.png")

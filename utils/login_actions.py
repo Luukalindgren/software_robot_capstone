@@ -3,7 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
 
-def login_to_spåt(driver):
+def login_to_spat(driver):
     """Login to Spåt with credentials from environment variables"""
     
     username = os.getenv("SPAT_USERNAME")

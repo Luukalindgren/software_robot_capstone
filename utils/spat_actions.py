@@ -9,6 +9,7 @@ import os
 # Define locators as constants
 TABLE_LOCATOR = "[data-testid='virtuoso-item-list']"
 ROW_LOCATOR = "tr.MuiTableRow-root"
+CELL_LOCATOR = "td.MuiTableCell-root"
 ARENA_SELECTOR_LOCATOR = "div.MuiSelect-multiple"
 ARENA_INPUT_LOCATOR_TEMPLATE = "li[data-value='{}']"
 FILTER_BUTTON_LOCATOR = "button.css-3ihcqq"
@@ -34,9 +35,16 @@ def get_session_ids(driver):
         rows = get_table_rows(driver)[:3]
 
         for row in rows:
+            children = row.find_elements(By.CSS_SELECTOR, CELL_LOCATOR)
+            session_length = children[2].text.split(":")
+            session_length_hours = session_length[0]
+            session_length_minutes = session_length[1]
             session_id = row.text
+            if (int(session_length_hours) < 1 and int(session_length_minutes) < 15):
+                print(f"Session {session_id} is shorter than 15 minutes. Skipping it...")
+                continue
             session_ids.append(session_id)
-            print(f"Session ID: {session_id}")
+            print(f"Session ID: {session_id} added for processing.")
         
         return session_ids
     except Exception as e:

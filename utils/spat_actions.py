@@ -20,7 +20,7 @@ APPLY_BUTTON_LOCATOR_XPATH = "/html/body/div/div/div[1]/main/div[2]/div[2]/div/d
 def get_table_rows(driver):
     """Helper function to get all rows from the session table."""
     try:
-        print("Getting table rows...")
+        print("\nGetting table rows...")
         table = driver.find_element(By.CSS_SELECTOR, TABLE_LOCATOR)
         return table.find_elements(By.CSS_SELECTOR, ROW_LOCATOR)
     except Exception as e:
@@ -53,7 +53,7 @@ def get_session_ids(driver):
 def apply_arena_filter(driver, arena):
     """Apply the arena filter to the sessions page"""
     try:
-        print("Applying arena filter...")
+        print("\nApplying arena filter...")
         filter_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, FILTER_BUTTON_LOCATOR)))
         filter_button.click()
 
@@ -66,12 +66,12 @@ def apply_arena_filter(driver, arena):
 
         backdrop = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, BACKDROP_LOCATOR)))
         backdrop.click()
-        print("Backdrop clicked!")
+        print("\nBackdrop clicked!")
         time.sleep(1)
 
         apply_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, APPLY_BUTTON_LOCATOR_XPATH)))
         apply_button.click()
-        print("Filter applied!")
+        print("\nFilter applied!")
 
         WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, ROW_LOCATOR)))
 
@@ -82,7 +82,7 @@ def loop_through_sessions(driver, arena, session_ids, download_folder):
     """Loop through sessions and process each"""
 
     try:
-        print("Looping through sessions...")
+        print("\nLooping through sessions...")
         for session_name in session_ids:
             print(f"Processing session: {session_name}")
 
@@ -94,9 +94,9 @@ def loop_through_sessions(driver, arena, session_ids, download_folder):
 
             print("Current URL: ", driver.current_url)
 
-            get_team_id(driver)
+            team_id = get_team_id(driver)
 
-            download_session_data(driver, download_folder)
+            download_session_data(driver, download_folder, team_id)
 
             driver.back()
 
@@ -105,14 +105,12 @@ def loop_through_sessions(driver, arena, session_ids, download_folder):
 
             WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, ROW_LOCATOR)))
             rows = get_table_rows(driver)
+        driver.get("https://spat.interjektio.dev/sessions")
     except Exception as e:
         print("An error occurred during looping: ", e)
 
-def download_session_data(driver, download_folder):
+def download_session_data(driver, download_folder, team_id):
     """Click the 'Export to Excel' button and download the file."""
-
-    # NEEDS TO RENAME THE DOWNLOADED FILE TO INCLUDE THE TEAM ID
-    team_id = get_team_id(driver)
     
     if check_if_already_downloaded(driver, download_folder, team_id):
         print("Session data already downloaded, skipping...")
@@ -142,7 +140,7 @@ def download_session_data(driver, download_folder):
             print("Downloaded file: ", downloaded_file)
             splitted_file_name = downloaded_file.split(".")
             name_with_team_id = splitted_file_name[0] + "_team_" + str(team_id) + "." + splitted_file_name[-1]
-            print("\n\nNew name: ", name_with_team_id)
+            print("\nNew name: ", name_with_team_id)
             os.rename("temp/" + downloaded_file, "temp/" + name_with_team_id)
         else:
             print("Download failed!")
@@ -152,7 +150,7 @@ def download_session_data(driver, download_folder):
 
 def wait_for_download(download_folder, team_id, timeout=30):
     """Wait for the download to finish by checking the download folder."""
-    print("Waiting for download to complete...")
+    print("\nWaiting for download to complete...")
     start_time = time.time()
 
     existing_files = set(os.listdir(download_folder))
@@ -174,7 +172,7 @@ def check_if_already_downloaded(driver, download_folder, team_id):
     """Check if the session data has already been downloaded"""
 
     session_id = driver.current_url.split("/")[-1]
-    print("Checking if session data already downloaded for session ID:", session_id)
+    print("\nChecking if session data already downloaded for session ID:", session_id)
 
     return f"session_{session_id}_statistics_team_{team_id}.xlsx" in os.listdir(download_folder)
 
@@ -229,7 +227,7 @@ def get_team_id(driver):
     if response.ok:
         data = response.json()
         team_id = data['data']['tag'][0]['tag_assignments'][0]['player']['team_id']
-        print("Team_id: ", team_id)
+        print(f"Team ID: {team_id}")
         return team_id
     else:
         print("Request failed: ", response.status_code, response.text)

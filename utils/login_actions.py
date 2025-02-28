@@ -2,6 +2,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
+import time
 
 def login_to_spat(driver):
     """Login to Spåt with credentials from environment variables"""
@@ -21,6 +22,8 @@ def login_to_spat(driver):
         email_input = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "email")))
         password_input = driver.find_element(By.NAME, "password")
 
+        time.sleep(3)
+
         email_input.clear()
         email_input.send_keys(username)
         password_input.clear()
@@ -28,11 +31,15 @@ def login_to_spat(driver):
 
         print("Credentials entered")
 
+        time.sleep(3)
+
         login_button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']")))
         login_button.click()
         print("Login button clicked")
 
         WebDriverWait(driver, 20).until(EC.url_changes(url))
+
+        time.sleep(3)
 
         sessions_button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CLASS_NAME, "button-sessions")))
         sessions_button.click()

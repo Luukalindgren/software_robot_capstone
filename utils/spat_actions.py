@@ -53,25 +53,36 @@ def get_session_ids(driver):
 def apply_arena_filter(driver, arena):
     """Apply the arena filter to the sessions page"""
     try:
+        time.sleep(3)
+
         print("\nApplying arena filter...")
         filter_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, FILTER_BUTTON_LOCATOR)))
         filter_button.click()
 
+        time.sleep(3)
+
         arena_selector = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, ARENA_SELECTOR_LOCATOR)))
         arena_selector.click()
+
+        time.sleep(3)
 
         arena_input_locator = ARENA_INPUT_LOCATOR_TEMPLATE.format(arena)
         arena_input = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, arena_input_locator)))
         arena_input.click()
 
+        time.sleep(3)
+
         backdrop = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, BACKDROP_LOCATOR)))
         backdrop.click()
         print("\nBackdrop clicked!")
-        time.sleep(1)
+        
+        time.sleep(3)
 
         apply_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, APPLY_BUTTON_LOCATOR_XPATH)))
         apply_button.click()
         print("\nFilter applied!")
+
+        time.sleep(3)
 
         WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, ROW_LOCATOR)))
 
@@ -88,6 +99,8 @@ def loop_through_sessions(driver, arena, session_ids, download_folder):
 
             rows = get_table_rows(driver)[:3]
             session_row = next(row for row in rows if session_name in row.text)
+
+            time.sleep(3)
 
             driver.execute_script("arguments[0].click();", session_row)
             print(f"Session {session_name} opened!")

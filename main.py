@@ -6,11 +6,6 @@ from utils.db_actions import connect_to_db, upload_sessions_to_db
 
 from selenium.webdriver.common.by import By
 
-# TODO:
-# - Containerize with Docker
-# - Test the GitHub Actions, daily schedule
-
-
 def main():
     # Selenium bot actions
     arena_1 = "Lähitapiola Raisio"

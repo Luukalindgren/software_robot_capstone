@@ -3,7 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
 
-def login_to_spåt(driver):
+def login_to_spat(driver):
     """Login to Spåt with credentials from environment variables"""
     
     username = os.getenv("SPAT_USERNAME")
@@ -37,7 +37,6 @@ def login_to_spåt(driver):
         sessions_button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CLASS_NAME, "button-sessions")))
         sessions_button.click()
         
-        WebDriverWait(driver, 20).until(EC.url_to_be(url + "/sessions"))
         print("Sessions button clicked")
 
     except Exception as e:

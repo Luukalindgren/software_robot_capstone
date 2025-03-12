@@ -8,6 +8,7 @@ from openpyxl import load_workbook
 #This is the database schema that showcases the structure of the database
 '''{
     "user_id": "string",  // Unique identifier for the user
+    "team_id": "integer",
     "speed_data": [
         {
             "speedzone": "string",      // e.g., "0-3.4"
@@ -27,6 +28,8 @@ def get_user_data(full_path):
     #Define data_file as the path to file !!This must be made generic so that it can handle multiple data files!!
     data_file = full_path 
 
+    team_id = full_path.split("_")[-1].split(".")[0]
+
     #Load entire workbook aka all work sheets in the excel file
     workbook = load_workbook(data_file)
     #this variable is to control the iteration of the worksheets
@@ -37,10 +40,11 @@ def get_user_data(full_path):
         active_sheet = sheet
         #create the first instance of the user data dictionary and give the user an id.
         user_data.append({
-            'user_id' : sheet.title,
-            'speed_data' : [],
-            'acceleration': 0,
-            'deceleration': 0
+            'user_id'       : sheet.title,
+            'team_id'       : team_id if team_id.isnumeric() == True else "",
+            'speed_data'    : [],
+            'acceleration'  : 0,
+            'deceleration'  : 0
         })
         #col_names contains the titles of the needed data, this allows the iteration of those columns
         col_names = {}

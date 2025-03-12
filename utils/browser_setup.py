@@ -4,9 +4,12 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.firefox.options import Options
 from webdriver_manager.firefox import GeckoDriverManager
 import os
+import chromedriver_autoinstaller
 
 def create_browser():
     """Create and return a browser instance with specified download settings."""
+
+    chromedriver_autoinstaller.install()
 
     download_folder = os.path.join(os.getcwd(), "temp")
 
@@ -29,5 +32,5 @@ def create_browser():
     # options.add_argument("--v=1")
 
     driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
-    
+
     return driver
